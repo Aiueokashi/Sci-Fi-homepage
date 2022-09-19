@@ -1,99 +1,202 @@
-import React, { Fragment, ReactElement, useEffect } from 'react';
-import Head from 'next/head';
-import { animate } from 'motion';
-import { Animator } from '@arwes/animator';
-import { Dots } from '@arwes/bgs';
+import React from 'react';
 
-const $$ = (selector)=> Array.from(document.querySelectorAll(selector));
+import withStyles from '../package/src/tools/withStyles';
+import { getResponsiveResource } from '../package/src/tools/utils';
+import createLoader from '../package/src/tools/createLoader';
+import createResponsive from '../package/src/tools/createResponsive';
+import Arwes from '../package/src/Arwes';
+import ArwesContent from '../package/src/Content';
+import Words from '../package/src/Words';
+import Button from '../package/src/Button';
+import Logo from '../package/src/Logo';
+import Loading from '../package/src/Loading';
 
-const PageIndex = () => {
-  useEffect(() => {
-    animate($$('.footer'), { opacity: [0, 1], y: [10, 0] });
-    animate($$('.footer a:first-child'), { x: [10, 0] });
-    animate($$('.footer a:last-child'), { x: [-10, 0] });
-    animate($$('.bg img'), { opacity: [0, 1], rotate: [-45, 0] }, { delay: 0.1 });
-    animate($$('.links'), { opacity: [0, 1], y: [30, 0] }, { delay: 0.2 });
-    animate($$('.links .button:first-child'), { x: [10, 0] }, { delay: 0.2 });
-    animate($$('.links .button:last-child'), { x: [-10, 0] }, { delay: 0.2 });
-    animate($$('.main p'), { opacity: [0, 1], y: [20, 0] }, { delay: 0.3 });
-    animate($$('.main h2'), { opacity: [0, 1], y: [10, 0] }, { delay: 0.4 });
-    animate($$('.main h1'), { opacity: [0, 1], y: [-10, 0] }, { delay: 0.45 });
-  }, []);
+import withTemplate from '../package/site/withTemplate';
+import { getTitle } from '../package/site/utils';
+import Link from '../package/site/components/Link';
+import FooterGitHub from '../package/site/components/FooterGitHub';
+import FooterAuthor from '../package/site/components/FooterAuthor';
 
-  return (
-    <Fragment>
-      <Head>
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <title>Arwes</title>
-        <meta name="description" content="Futuristic Sci-Fi UI Web Framework." />
-        <meta property="og:title" content="Arwes" />
-        <meta property="og:site_name" content="Arwes" />
-        <meta property="og:description" content="Futuristic Sci-Fi UI Web Framework." />
-        {/* TODO: For next development environment. */}
-        <meta property="og:image" content="https://next.arwes.dev/arwes.jpg" />
-        <meta property="og:url" content="https://next.arwes.dev" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:image:alt" content="Arwes" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@arwesjs" />
-
-        <link rel="icon" type="image/png" href="/logo.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='' />
-      </Head>
-      <style>{`
-        html { background-color: #171717; }
-      `}</style>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700&display=swap" />
-      <div className='page'>
-        <main className='main'>
-          <h1 className='hidden'>
-            <img
-              src='/logotype.png'
-              alt='Arwes'
-            />
-          </h1>
-
-          <h2 className='hidden'>
-            Futuristic Sci-Fi UI Web Framework
-          </h2>
-
-          <p className='hidden'>
-            Work in progress of the next version
-          </p>
-
-          <nav className='links hidden'>
-            <a className='button button--secondary' href='/play'>Play</a>
-            <a className='button button--secondary' href='/perf'>Perf</a>
-            <a className='button button--secondary' href='https://arwes.dev' target='main'>Main</a>
-          </nav>
-        </main>
-
-        <footer className='footer hidden'>
-          <a href='https://github.com/arwes/arwes' target='github'>GitHub</a>
-          <a href='https://discord.gg/s5sbTkw' target='discord'>Discord</a>
-          <a href='https://twitter.com/arwesjs' target='twitter'>Twitter</a>
-        </footer>
-
-        <div className='bg'>
-          <img
-            className='hidden'
-            src='/assets/images/arwesLogoImage.svg'
-          />
-        </div>
-        <Animator duration={{ enter: 0.75, exit: 0.75 }}>
-          <Dots
-            color='hsla(180, 29%, 72%, 0.04)'
-            size={5}
-            distance={30}
-            originInverted
-          />
-        </Animator>
-      </div>
-    </Fragment>
-  );
+const styles = (theme) => {
+  return {
+    root: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      '& h1': {
+        margin: [0, 0, theme.margin / 2],
+        fontSize: 40,
+      },
+      '& p': {
+        margin: [0, 0, theme.margin],
+        maxWidth: 500,
+      },
+      '& $option + $option': {
+        marginLeft: theme.padding / 2,
+      },
+    },
+    main: {
+      flex: 1,
+      display: 'flex',
+    },
+    content: {
+      margin: 'auto',
+      padding: [0, theme.padding],
+      textAlign: 'center',
+    },
+    option: {
+      display: 'inline-block',
+    },
+    footer: {
+      opacity: theme.alpha / 2,
+    },
+    footerContent: {
+      display: 'flex',
+      padding: theme.padding / 2,
+      fontSize: '80%',
+    },
+    footerLeft: {
+      flex: '1 1 auto',
+    },
+    footerRight: {
+      flex: '1 1 auto',
+      textAlign: 'right',
+      '& a': {
+        textAlign: 'left',
+      },
+    },
+  };
 };
 
-export default PageIndex;
+class Home extends React.Component {
+
+  constructor () {
+    super(...arguments);
+    this.state = {
+      show: false,
+      loaded: false
+    };
+
+    this.loader = createLoader();
+    this.responsive = createResponsive({
+      getTheme: () => this.props.theme
+    });
+  }
+
+  componentDidMount () {
+    window.document.title = getTitle(window.location.pathname);
+    this.startLoading();
+  }
+
+  render () {
+    const { classes, resources } = this.props;
+    const { show, loaded } = this.state;
+
+    return (
+      <div>
+        <Loading
+          full
+          animate
+          show={!show && !loaded}
+          animation={{
+            unmountOnExit: true
+          }}
+        />
+        <Arwes
+          animate
+          show={show}
+          showResources={show}
+          background={resources.background}
+          pattern={resources.pattern}
+        >
+          {anim => (
+          <ArwesContent className={classes.root}>
+
+            <div className={classes.main}>
+              <div className={classes.content}>
+
+                <Logo animate show={anim.entered} layer='header' />
+                <header>
+                  <h1><Words animate show={anim.entered}>
+                    Arwes
+                  </Words></h1>
+                </header>
+                <main>
+                  <p style={{ marginBottom: '10px' }}>
+                    <Words animate show={anim.entered}>
+                      Futuristic Sci-Fi and Cyberpunk Graphical User Interface Framework for Web Apps
+                    </Words>
+                  </p>
+                  <p><small><a href='https://arwes.dev'>
+                    <Words animate show={anim.entered}>
+                      This project version is now deprecated. Please use arwes.dev.
+                    </Words>
+                  </a></small></p>
+                </main>
+
+                <nav>
+                  <Link className={classes.option} href='/docs' onLink={this.onLink}>
+                    <Button animate show={anim.entered}>
+                      {btnAnim => (
+                        <Words animate show={btnAnim.entered}>Docs</Words>
+                      )}
+                    </Button>
+                  </Link>
+                  {' '}
+                  <Link className={classes.option} href='/api' onLink={this.onLink}>
+                    <Button animate show={anim.entered}>
+                      {btnAnim => (
+                        <Words animate show={btnAnim.entered}>API</Words>
+                      )}
+                    </Button>
+                  </Link>
+                  {' '}
+                  <Link className={classes.option} href='/play' onLink={this.onLink}>
+                    <Button animate show={anim.entered}>
+                      {btnAnim => (
+                        <Words animate show={btnAnim.entered}>Play</Words>
+                      )}
+                    </Button>
+                  </Link>
+                </nav>
+
+              </div>
+            </div>
+
+            <footer className={classes.footer}>
+              <div className={classes.footerContent}>
+                <div className={classes.footerLeft}>
+                  <FooterGitHub show={anim.entered} onLink={this.onLink} />
+                </div>
+                <div className={classes.footerRight}>
+                  <FooterAuthor show={anim.entered} onLink={this.onLink} />
+                </div>
+              </div>
+            </footer>
+
+          </ArwesContent>
+          )}
+        </Arwes>
+      </div>
+    );
+  }
+
+  startLoading () {
+    const responsive = this.responsive.get();
+    const bg = getResponsiveResource(this.props.resources.background, responsive);
+
+    this.loader.load({ images: [bg] }, { timeout: 5 * 1000 }).
+      then(() => {}, () => {}).
+      then(() => this.setState({ show: true, loaded: true }));
+  }
+
+  onLink = () => {
+    this.setState({ show: false });
+  }
+}
+
+export default withTemplate(withStyles(styles)(Home));
