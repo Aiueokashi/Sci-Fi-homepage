@@ -4,17 +4,26 @@ import ThemeProvider from '../src/ThemeProvider';
 import createTheme from '../src/tools/createTheme';
 import SoundsProvider from '../src/SoundsProvider';
 import createSounds from '../src/tools/createSounds';
+import smallImage from '/public/img/background.jpg';
+import mediumImage from '/public/img/background-medium.jpg';
+import largeImage from '/public/img/background-large.jpg';
+import xlargeImage from '/public/img/background-large.jpg';
+import glowImage from '/public/img/glow.png';
+import clicksound from '/public/sound/click.mp3';
+import typingsound from '/public/sound/typing.mp3';
+import deploysound from '/public/sound/deploy.mp3';
+
 
 import Template from './components/Template';
 
 const resources = {
   background: {
-    small: '/public/img/background.jpg',
-    medium: '/public/img/background-medium.jpg',
-    large: '/public/img/background-large.jpg',
-    xlarge: '/public/img/background-large.jpg'
+    small: smallImage,
+    medium: mediumImage,
+    large: largeImage,
+    xlarge: largeImage,
   },
-  pattern: '/public/img/glow.png',
+  pattern: glowImage,
 };
 
 const sounds = {
@@ -23,15 +32,15 @@ const sounds = {
   },
   players: {
     click: {
-      sound: { src: ['/public/sound/click.mp3'] },
+      sound: { src: [ clicksound ] },
       settings: { oneAtATime: true }
     },
     typing: {
-      sound: { src: ['/public/sound/typing.mp3'] },
+      sound: { src: [ typingsound ] },
       settings: { oneAtATime: true }
     },
     deploy: {
-      sound: { src: ['/public/sound/deploy.mp3'] },
+      sound: { src: [ deploysound ] },
       settings: { oneAtATime: true }
     },
   }
